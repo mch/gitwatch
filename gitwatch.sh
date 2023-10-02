@@ -274,12 +274,12 @@ cd "$TARGETDIR" || {
 
 if [ -n "$REMOTE" ]; then        # are we pushing to a remote?
   if [ -z "$BRANCH" ]; then      # Do we have a branch set to push to ?
-    PUSH_CMD="$GIT push $REMOTE" # Branch not set, push to remote without a branch
+    PUSH_CMD="$GIT pull $REMOTE && $GIT push $REMOTE" # Branch not set, push to remote without a branch
   else
     # check if we are on a detached HEAD
     if HEADREF=$($GIT symbolic-ref HEAD 2> /dev/null); then # HEAD is not detached
       #PUSH_CMD="$GIT push $REMOTE $(sed "s_^refs/heads/__" <<< "$HEADREF"):$BRANCH"
-      PUSH_CMD="$GIT push $REMOTE ${HEADREF#refs/heads/}:$BRANCH"
+      PUSH_CMD="$GIT pull $REMOTE ${HEADREF#refs/heads/}:$BRANCH && $GIT push $REMOTE ${HEADREF#refs/heads/}:$BRANCH"
     else # HEAD is detached
       PUSH_CMD="$GIT push $REMOTE $BRANCH"
     fi
